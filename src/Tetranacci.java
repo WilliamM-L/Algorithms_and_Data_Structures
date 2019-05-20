@@ -1,34 +1,83 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Tetranacci {
 	
 	public static void main(String[] args) {
+		//variables used throughout the program
 		long input=0;
 		Scanner kb = new Scanner(System.in);
 		boolean invalid;
+		long start;
+		double TRinterval,EXinterval, result;
 		
-		System.out.print("Enter what will be the input to the Tetranacci function: ");
+		//The commented block below was used to test the program 
 		
-		do {
-			invalid=false;
-			try {
-			input = kb.nextInt();
-			if (input<0)
-				invalid=true;
-			} catch(InputMismatchException e) {
-				invalid = true;
+		//System.out.print("Enter what will be the input to the Tetranacci function: ");
+		
+//		do {
+//			invalid=false;
+//			try {
+//			input = kb.nextInt();
+//			if (input<0)
+//				invalid=true;
+//			} catch(InputMismatchException e) {
+//				invalid = true;
+//			}
+//		} while (invalid);
+		
+		PrintWriter pw = null;
+		
+		try {
+			pw = new PrintWriter(new FileOutputStream("out.txt"));
+			pw.println("~~~~~Testing the Tail Recursive version!~~~~~");
+			for (int i = 5; i <= 1500; i+=5) {
+				start = System.nanoTime();
+				result = TRTetranacci(0, 0, 0, 1, i);
+				TRinterval = (System.nanoTime()-start)/1000000.0; 
+				pw.print("Input = "+i+":" + "\t" + result+ "\t");
+				
+				pw.println("Time elapsed: "+TRinterval);
 			}
-		} while (invalid);
+			pw.println("~~~~~Testing the Exponential version!~~~~~");
+			for (int i = 5; i <= 35; i+=5) {
+				start = System.nanoTime();
+				result = ExpTetranacci(i);
+				EXinterval = (System.nanoTime()-start)/1000000.0; 
+				pw.print("Input = "+i+":" + "\t" + result + "\t");
+				
+				pw.println("Time elapsed: "+EXinterval);
+			}
+		} catch (FileNotFoundException e) {
+			System.exit(0);
+		} catch (Exception e2) {
+			System.exit(0);
+		}
 		
-		System.out.println("Testing Exp then TR:"  + "\t" + TRTetranacci(0, 0, 0, 1, input));
+		pw.close();
 		
-		System.currentTimeMillis();
 		
+		
+		
+		
+		
+//		start = System.nanoTime();
+//		
+//		System.out.println("Testing TR:" + "\t" + TRTetranacci(0, 0, 0, 1, input));
+//		
+//		end = System.nanoTime();
+//		TRinterval = end-start; 
+//		
+//		System.out.println(end);
+//		System.out.println(start);
 		
 	}
 	
-	public static long ExpTetranacci(long in) {
+	public static double ExpTetranacci(double in) {
 		//base case when 0<=n<=3
 		if (in==0 || in==1 || in==2) 
 			return 0;
@@ -39,7 +88,7 @@ public class Tetranacci {
 		
 	}
 	
-	public static long TRTetranacci(long a, long b, long c, long d, long n) {
+	public static double TRTetranacci(double a, double b, double c, double d, double n) {
 		//base cases when 0<=n<=3, which is the final result, only one stack space is needed since the total sum 
 		// will either be a, b, c or d.
 		if (n==0) 
