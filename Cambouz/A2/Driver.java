@@ -10,16 +10,26 @@ public class Driver {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ArrayStack<Double> valStack = new ArrayStack<Double>();
+		ArrayStack<String> valStack = new ArrayStack<String>();
 		System.out.println("The value at the top of the stack is: "+valStack.top());
+		/*valStack.push(new Double(3));
 		valStack.push(new Double(3));
-		valStack.push(new Double(3));
+		valStack.push(new Double(2));
+		valStack.push(new Double(3));*/
 		
 		
 		ArrayStack<String> opStack = new ArrayStack<String>();
+		/*opStack.push("+");
+		opStack.push("-");
 		opStack.push("^");
 		System.out.println(valStack);
 		doOp(valStack,opStack);
+		System.out.println(valStack);
+		doOp(valStack,opStack);
+		System.out.println(valStack);
+		doOp(valStack,opStack);
+		System.out.println(opStack);*/
+		evalExp("1 <= 3 + 4 + 7 * 3", valStack, opStack);
 		System.out.println(valStack);
 		/*Scanner sc = null;
 		PrintWriter pw = null;
@@ -46,15 +56,17 @@ public class Driver {
 	 * 	opStack.pop()->op
 	 * 	valStack.push(x, op, y).
 	 */
-	public static void doOp(ArrayStack<Double> valStack, ArrayStack<String> opStack) {
-		double x = valStack.pop();
-		double y = valStack.pop();
+	public static void doOp(ArrayStack<String> valStack, ArrayStack<String> opStack) {
+		String x = valStack.pop();
+		String y = valStack.pop();
 		String op = opStack.pop();
-		push(valStack, x, op, y);
+		push(valStack, y, op, x);
 	}
 	
 	//Push method to store the result, not numbers or operands.
-		public static boolean push(ArrayStack<Double> valStack, Double x, String op, Double y) {
+		public static boolean push(ArrayStack<String> valStack, String a, String op, String b) {
+			double x = Double.parseDouble(a);
+			double y = Double.parseDouble(b);
 			if (op.equals("(")) {
 				//????
 			}
@@ -63,17 +75,17 @@ public class Driver {
 				//????
 			}
 			if (op.equals("^")){
-				valStack.push(Math.pow(x, y));
+				valStack.push(Math.pow(x, y)+"");
 			} else if (op.equals("*")) {
-				valStack.push(x*y);
+				valStack.push(x*y+"");
 			} else if (op.equals("/")) {
-				valStack.push(x/y);
+				valStack.push(x/y+"");
 			}
 			else if (op.equals("+")) {
-				valStack.push(x+y);
+				valStack.push(x+y+"");
 			}
 			else if (op.equals("-")) {
-				valStack.push(x-y);
+				valStack.push(x-y+"");
 			} else if (op.equals(">")) {
 				return x>y;
 			} else if (op.equals(">=")) {
@@ -95,8 +107,12 @@ public class Driver {
 	 * 	while (valStack.size()>1)&&(prec(refOps)<=prec(OpStack.pop()))
 	 * 		doOp();
 	 */
-	public static void repeatOps(ArrayStack<Double> valStack, ArrayStack<String> opStack,String refOps) {
-		while((valStack.size()>1)&&(precedence(refOps)<=precedence(opStack.top()))){
+	public static void repeatOps(ArrayStack<String> valStack, ArrayStack<String> opStack,String refOps) {
+		System.out.println("valStack has size"+valStack.size());
+		System.out.println("v");
+		System.out.println("precedence of refOps, which is"+refOps+" is "+precedence(refOps));
+		System.out.println("opStack top is "+opStack.top());
+		while((valStack.size()>1)&&(precedence(refOps)>=precedence(opStack.top()))){
 			doOp(valStack,opStack);
 		}
 		
@@ -131,19 +147,22 @@ public class Driver {
 		 *	repeatOps($)
 		 *	return valStack.pop()
 		 */
-		public static Double evalExp(String s, ArrayStack<Double> valStack, ArrayStack<String> opStack) {
+		public static String evalExp(String s, ArrayStack<String> valStack, ArrayStack<String> opStack) {
+			
 			StringTokenizer st = new StringTokenizer(s);
 			while(st.hasMoreTokens()) {
 				String z = st.nextToken();
 				//Call the isNumber method
 				if (isNumber(z)) {
 					Double i = Double.parseDouble(z);
-					valStack.push(i);
+					valStack.push(i+"");
+					System.out.println(valStack);
 				} else {
-					//repeat operation
-					return valStack.top();
+					repeatOps(valStack, opStack, z);
+					opStack.push(z);
 				}
 			}
+			repeatOps(valStack,opStack,"$");
 			return valStack.top();
 		}
 		

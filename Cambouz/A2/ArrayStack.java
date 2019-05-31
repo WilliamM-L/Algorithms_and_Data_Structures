@@ -1,7 +1,7 @@
 
 public class ArrayStack<T> {
 	Object[] data;
-	final int CAP = 2;
+	final int CAP = 10;
 	int top=-1;
 
 	public ArrayStack() {
