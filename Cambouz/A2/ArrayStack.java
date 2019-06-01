@@ -1,7 +1,11 @@
-
+/*
+ * COMP 352 A2
+ * Camil Bouzidi ID: 40099611
+ * The arraystack class using dynamic array.
+ */
 public class ArrayStack<T> {
 	Object[] data;
-	final int CAP = 2;
+	final int CAP = 10;
 	int top=-1;
 
 	public ArrayStack() {
@@ -32,7 +36,6 @@ public class ArrayStack<T> {
 	
 	public boolean push(T t) {
 		if (size()==data.length) {
-			System.out.println("Array changed");
 			Object[] newData = new Object[this.size()+1];
 			for (int j=0; j<data.length; j++) {
 				newData[j] = (T) data[j];
