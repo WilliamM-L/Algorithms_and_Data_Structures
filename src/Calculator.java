@@ -14,6 +14,7 @@ public class Calculator {
 		PrintWriter pw = null;
 		Scanner sc = null;
 		double result;
+		String toCompute;
 		
 		//Setting up the file IO
 		try {
@@ -21,7 +22,10 @@ public class Calculator {
 			sc = new Scanner(new FileInputStream("Expressions.txt"));
 			//Reading each line 
 			while (sc.hasNextLine()) {
-				result = compute(sc.nextLine());
+				toCompute = sc.nextLine();
+				pw.print(toCompute+ " : ");
+				result = compute(toCompute);
+				//if the doOp method has determined that the result of the expression is a boolean, we display it 
 				if (comparison) {
 					pw.println(finalBooleanResult);
 				} else {
@@ -40,24 +44,11 @@ public class Calculator {
 		sc.close();
 		pw.close();
 		
-		//String test = "( 2 ^ 5 - 6 ^ 2 ) + 4 / 4";
-//		StringTokenizer tokenizer = new StringTokenizer(test, " ");
-//		while (tokenizer.hasMoreTokens()) {
-//			System.out.print(tokenizer.nextToken());
-//		}
-		
-	
-		
-//		result = compute(test);
-//		
-		
-		
-		
-		
 	}
 	
 
 	private static double compute(String exp) {
+		//Separating the line into tokens separated by " "
 		StringTokenizer tokenizer = new StringTokenizer(exp, " ");
 		String next;
 		comparison = false;
@@ -68,13 +59,18 @@ public class Calculator {
 			if (next.equals("(")) {
 				opStack.push("(");
 			} else if (next.equals(")")) {
+				//when the closing bracket is encountered
 				inner();
+			//numbers are directly pushed onto the value stack
 			} else if (isNumber(next)) {
 				valStack.push(Double.parseDouble(next));
 			} else {
+			//if nothing has happened so far, we check if the encountered operator has more precedence
+			//than the one on top of the stack
 				repeatOps(next);
 				opStack.push(next);
 			}
+			//used for debugging
 			System.out.println("~~~~~~~~~~~~");
 			System.out.println("values: " + valStack);
 			System.out.println("operators: " + opStack);
@@ -88,15 +84,20 @@ public class Calculator {
 			System.out.println("operators: " + opStack);
 			System.out.println("~~~~~~~~~~~~");
 		}
+		//if the result is in fact a boolean, return a bogus value
 		if (comparison) {
 			return 999;
 		} else {
+			//popping the last value, so it can be reused for the next expression
 			return valStack.pop();
 		}
 		
 	}
 	
 	private static void repeatOps(String refOp) {
+		//if there are at least two value on the value stack, and an actual operator is in the operator stack,
+		//and the received operator has a lower precedence than the one on the stack
+		//then operations will done until that is no longer the case
 		while(valStack.size()>1&&opStack.top()!="("&&opStack.size()>=1&&precedence(refOp)<=precedence(opStack.top())){
 			doOp();
 		}
@@ -108,9 +109,11 @@ public class Calculator {
 		while (!opStack.top().equals("(")) {
 			doOp();
 		}
+		//removing that parentheses
 		opStack.pop();
 	}
 	
+	//simply represent the precendence scheme for the operators
 	private static int precedence(String op) {
 		if (op.equals("(")||op.equals(")"))
 			return 6;
@@ -130,10 +133,11 @@ public class Calculator {
 	}
 	
 	private static void doOp() {
+		//getting the values and operand
 		double b = valStack.pop();
 		double a = valStack.pop();
 		String operation = opStack.pop();
-		
+		//computing the result
 		if (operation.equals("^")){
 			valStack.push(Math.pow(a, b));
 		} else if (operation.equals("*")) {
@@ -146,6 +150,7 @@ public class Calculator {
 		}
 		else if (operation.equals("-")) {
 			valStack.push(a-b);
+		//if the final answer is in fact a boolean, we indicate it be setting the static var comparison to true
 		} else if (operation.equals(">")) {
 			finalBooleanResult = a>b; comparison = true;
 		} else if (operation.equals(">=")) {
@@ -162,6 +167,7 @@ public class Calculator {
 		
 	}
 	
+	//checks if the received string is a number
 	private static boolean isNumber(String s) {
 		try {
 			double result = Double.parseDouble(s);

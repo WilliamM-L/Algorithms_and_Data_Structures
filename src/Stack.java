@@ -9,18 +9,20 @@ public class Stack<S> {
 		pointer = 0;
 		stack = new Object[10];
 	}
-	
+	//this does not remove the element on top of the stack
 	public S top() {
 		return (S)stack[pointer];
 	}
 	
 	public void push(S s) {
+		//the array will be copied to a new one if need be, the size is incremented, not multiplied
 		if(pointer == stack.length-1)
 			increaseStackSpace();
-		//if the pointer points to a null entry, the stack is empty
+		//if the pointer points to a null entry, the stack is empty, the pointer is not incremented
 		if (stack[pointer] == null) {
 			stack[pointer] = s;
 		} else{
+			//otherwise, the pointer should be incremented
 			stack[++pointer] = s;
 		}
 		
@@ -28,7 +30,6 @@ public class Stack<S> {
 	
 	@SuppressWarnings("unchecked")
 	public S pop() {
-		//the --pointer might cause a problem because of the return...
 		Object result;
 		if(pointer>0) {
 			result = stack[pointer];
@@ -53,6 +54,7 @@ public class Stack<S> {
 		if (pointer!=0) {
 			return pointer+1;
 		} else {
+			//if the pointer is at 0, must check if the position contains something
 			if (stack[pointer] ==null) {
 				return 0;
 			} else {
@@ -60,7 +62,7 @@ public class Stack<S> {
 			}
 		}
 	}
-	
+	//printing the stack for debugging purposes
 	public String toString() {
 		if (stack[pointer] == null)
 			return "Empty!";
