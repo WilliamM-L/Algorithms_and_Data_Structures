@@ -15,11 +15,11 @@ public class Calculator {
 		Scanner sc = null;
 		double result;
 		
-		
+		//Setting up the file IO
 		try {
 			pw = new PrintWriter(new FileOutputStream("CalculatorResult.txt"));
 			sc = new Scanner(new FileInputStream("Expressions.txt"));
-			
+			//Reading each line 
 			while (sc.hasNextLine()) {
 				result = compute(sc.nextLine());
 				if (comparison) {
@@ -91,7 +91,7 @@ public class Calculator {
 		if (comparison) {
 			return 999;
 		} else {
-			return valStack.top();
+			return valStack.pop();
 		}
 		
 	}

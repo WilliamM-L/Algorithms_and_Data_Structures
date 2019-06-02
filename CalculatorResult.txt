@@ -11,3 +11,11 @@ false
 true
 false
 false
+1024.0
+278161.65106310026
+true
+false
+78.0
+-10023.75
+4.0
+true
