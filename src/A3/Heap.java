@@ -8,23 +8,37 @@ public class Heap {
 	private int[][] heap;
 	//heap is of the form [[key,value],[key,value],[key,value],...]
 	private static int toRemember;
+	private static int foundAt;
 	
-
-	public void reconstruct() {
-		
+	//int start
+	public void reconstruct(int start) {
+		int[] bucket = {-1,-1};
+		//looking at the parents for a violation of heap structure
+		//won't go in if we're at the root
+		if (start!=0 && compare(heap[start],heap[(start-1)/2])==-1) {
+			
+		//looking at the children for a violation of the heap structure
+		//won't go in if we're at the leaves
+		//(Checking the left child)
+		} else if(2*start+1<size && compare(heap[start],heap[(start-1)/2])==-1) {
+			
+			//now checking the right child
+			if (2*start+2<size && compare(heap[start],heap[(start-1)/2])==-1) {
+				
+			}
+		}
+		//once here, there is nothing wrong
 	}
 	
 	public int[] insert(int k, int v) {
 		int[] toAdd = {k,v};
-		size++;
 		//might need to extend the array representation of the heap
-		//the size has been incremented, so we know the array is full if size == array.length
 		if(size == heap.length)
 			extendHeap();
+		heap[size]= toAdd;
+		size++;
 		
-		
-		
-		return toAdd;
+		return toAdd.clone();
 	}
 	
 	public Heap(boolean isMax) {
@@ -54,9 +68,17 @@ public class Heap {
 	}
 	
 	public int[] remove(int index) {
-		int[] result = heap[index].clone();
-		heap[index] = null;
-		reconstruct();
+		int[] result = null;
+		if (index != size-1) {
+			result = heap[index].clone();
+			heap[index] = heap[size-1];
+			heap[size-1] = null;
+			reconstruct(index);
+		} else {
+			result = heap[index].clone();
+			heap[index] = null;
+		}
+		
 		size--;
 		return result;
 	}
@@ -83,7 +105,7 @@ public class Heap {
 	//because we don't know which child of any node is the biggest child node.
 	public int replaceKey(int[] e, int k) {
 		replacerHelper(e,k,0, true);
-		reconstruct();
+		reconstruct(foundAt);
 		//the key will be stored in that var
 		return toRemember;
 	}
@@ -104,8 +126,10 @@ public class Heap {
 		if(Arrays.equals(e, heap[current])) {
 			if (wantKey) {
 				toRemember = e[0];e[0] = kv;
+				foundAt = current;
 			} else {
 				toRemember = e[1];e[1] = kv;
+				foundAt = current;
 			}
 			return;
 		}
@@ -134,7 +158,7 @@ public class Heap {
 	
 	public void toggle() {
 		isMax = !isMax;
-		reconstruct();
+		reconstruct(0);
 	}
 	
 
