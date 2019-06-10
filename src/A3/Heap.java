@@ -10,24 +10,36 @@ public class Heap {
 	private static int toRemember;
 	private static int foundAt;
 	
-	//int start
+	//Be sure to review the comparator parameters!
+	//This should work since the compare method works differently depending on the type of the heap
 	public void reconstruct(int start) {
 		int[] bucket = {-1,-1};
 		//looking at the parents for a violation of heap structure
 		//won't go in if we're at the root
 		if (start!=0 && compare(heap[start],heap[(start-1)/2])==-1) {
-			
-		//looking at the children for a violation of the heap structure
-		//won't go in if we're at the leaves
-		//(Checking the left child)
-		} else if(2*start+1<size && compare(heap[start],heap[(start-1)/2])==-1) {
-			
-			//now checking the right child
-			if (2*start+2<size && compare(heap[start],heap[(start-1)/2])==-1) {
-				
+			bucket = heap[(start-1)/2];
+			heap[(start-1)/2] = heap[start];
+			heap[start] = bucket;
+			reconstruct((start-1)/2);
+		} else {
+			//looking at the children for a violation of the heap structure
+			//won't go in if we're at the leaves
+			//(Checking the left child)
+			if(2*start+1<size && compare(heap[2*start+1],heap[start])==-1) {
+				bucket = heap[2*start+1];
+				heap[2*start+1] = heap[start];
+				heap[start] = bucket;
+				reconstruct(2*start+1);
+			}
+			//now checking the right child in case there was no match
+			if (2*start+2<size && compare(heap[2*start+2],heap[start])==-1) {
+				bucket = heap[2*start+2];
+				heap[2*start+2] = heap[start];
+				heap[start] = bucket;
+				reconstruct(2*start+2);
 			}
 		}
-		//once here, there is nothing wrong
+		//once here, there is nothing wrong with the heap anymore
 	}
 	
 	public int[] insert(int k, int v) {
@@ -149,10 +161,8 @@ public class Heap {
 	}
 	
 	public String state() {
-		if (isMax) {
+		if (isMax)
 			return "This heap is a Max-Heap!";
-		}
-		
 		return "This heap is a Min-Heap!";
 	}
 	
