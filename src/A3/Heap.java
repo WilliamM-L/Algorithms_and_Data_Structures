@@ -9,7 +9,7 @@ public class Heap {
 	
 	//Be sure to review the comparator parameters!
 	//This should work since the compare method works differently depending on the type of the heap
-	public void reconstruct(int start) {
+	public int reconstruct(int start) {
 		//looking at the parents for a violation of heap structure
 		//won't go in if we're at the root
 		if (start!=0 && compare(heap[start],heap[(start-1)/2])==-1) {
@@ -39,10 +39,17 @@ public class Heap {
 			}
 		}
 		//once here, there is nothing wrong with the heap anymore
+		//the index it's now at is returned in case it is used
+		return start;
 	}
 	
 	private void swapNodes(int n1, int n2) {
 		int[] bucket = heap[n1].clone();
+		//the indices have to be switched before the nodes are swapped for the indices to stay valid
+		int indexBucket = heap[n1][0];
+		heap[n1][0] = heap[n2][0];
+		heap[n2][0] = indexBucket;
+		
 		heap[n1] = heap[n2];
 		heap[n2] = bucket;
 	}
@@ -53,10 +60,11 @@ public class Heap {
 		if(size == heap.length)
 			extendHeap();
 		heap[size]= toAdd;
-		reconstruct(size);
+		int newIndex = reconstruct(size);
 		size++;
+		int[] result = {k,v,newIndex};
 		
-		return toAdd.clone();
+		return result;
 	}
 	
 	public Heap(boolean isMax) {
