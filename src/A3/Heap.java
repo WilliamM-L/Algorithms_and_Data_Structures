@@ -1,53 +1,59 @@
 package A3;
-import java.util.Arrays;
 //only used to compare two arrays for equality for better readability
 
 public class Heap {
 	public boolean isMax;
 	private int size;
 	private int[][] heap;
-	//heap is of the form [[key,value],[key,value],[key,value],...]
-	private static int toRemember;
-	private static int foundAt;
+	//heap is of the form [[key,value,index],[key,value,index],[key,value,index],...]
 	
 	//Be sure to review the comparator parameters!
 	//This should work since the compare method works differently depending on the type of the heap
 	public void reconstruct(int start) {
-		int[] bucket = {-1,-1};
 		//looking at the parents for a violation of heap structure
 		//won't go in if we're at the root
 		if (start!=0 && compare(heap[start],heap[(start-1)/2])==-1) {
-			bucket = heap[(start-1)/2];
-			heap[(start-1)/2] = heap[start];
-			heap[start] = bucket;
+//			bucket = heap[(start-1)/2];
+//			heap[(start-1)/2] = heap[start];
+//			heap[start] = bucket;
+			swapNodes((start-1)/2, start);
 			reconstruct((start-1)/2);
 		} else {
 			//looking at the children for a violation of the heap structure
 			//won't go in if we're at the leaves
 			//(Checking the left child)
 			if(2*start+1<size && compare(heap[2*start+1],heap[start])==-1) {
-				bucket = heap[2*start+1];
-				heap[2*start+1] = heap[start];
-				heap[start] = bucket;
+//				bucket = heap[2*start+1];
+//				heap[2*start+1] = heap[start];
+//				heap[start] = bucket;
+				swapNodes(2*start+1, start);
 				reconstruct(2*start+1);
 			}
 			//now checking the right child in case there was no match
 			if (2*start+2<size && compare(heap[2*start+2],heap[start])==-1) {
-				bucket = heap[2*start+2];
-				heap[2*start+2] = heap[start];
-				heap[start] = bucket;
+//				bucket = heap[2*start+2];
+//				heap[2*start+2] = heap[start];
+//				heap[start] = bucket;
+				swapNodes(2*start+2, start);
 				reconstruct(2*start+2);
 			}
 		}
 		//once here, there is nothing wrong with the heap anymore
 	}
 	
+	private void swapNodes(int n1, int n2) {
+		int[] bucket = heap[n1].clone();
+		heap[n1] = heap[n2];
+		heap[n2] = bucket;
+	}
+	
 	public int[] insert(int k, int v) {
-		int[] toAdd = {k,v};
+		int[] toAdd = {k,v,size};
 		//might need to extend the array representation of the heap
 		if(size == heap.length)
 			extendHeap();
 		heap[size]= toAdd;
+		reconstruct(size);
 		size++;
 		
 		return toAdd.clone();
@@ -62,7 +68,7 @@ public class Heap {
 	
 	public void extendHeap() {
 		//the new heap will be twice the size of the old heap
-		int[][] replacement = new int[heap.length*2][2];
+		int[][] replacement = new int[heap.length*2][];
 		for (int i = 0; i < heap.length; i++) {
 			replacement[i] = heap[i];
 		}
@@ -76,21 +82,24 @@ public class Heap {
 	
 	//after removing the top, the tree must be reconstructed
 	public int[] removeTop()	{
-		return remove(0);
+		return remove(heap[0]);
 	}
 	
-	public int[] remove(int index) {
+	public int[] remove(int[] e) {
 		int[] result = null;
-		if (index != size-1) {
-			result = heap[index].clone();
-			heap[index] = heap[size-1];
+		if (e[2] != size-1) {
+			//procedure if we're removing a node that's not the last one
+			result = heap[e[2]].clone();
+			//the target node becomes the last node, and the last node is removed
+			heap[e[2]] = heap[size-1];
 			heap[size-1] = null;
-			reconstruct(index);
+			reconstruct(e[2]);
 		} else {
-			result = heap[index].clone();
-			heap[index] = null;
+			//if the last node is wanted, no reconstruction of the heap is required
+			result = heap[e[2]].clone();
+			heap[e[2]] = null;
 		}
-		
+		//the heap is smaller
 		size--;
 		return result;
 	}
@@ -113,44 +122,28 @@ public class Heap {
 		return -2;
 	}
 	
+	
 	//since this is a heap, and not a binary search tree, it takes O(n) to find the entry,
 	//because we don't know which child of any node is the biggest child node.
 	public int replaceKey(int[] e, int k) {
-		replacerHelper(e,k,0, true);
-		reconstruct(foundAt);
+		int oldKey = e[0];
+		//Changing the key of the passed node in the heap
+		heap[e[2]][0] = k;
+		reconstruct(e[2]);
 		//the key will be stored in that var
-		return toRemember;
+		return oldKey;
 	}
 	
 	public int replaceValue(int[] e, int v) {
-		replacerHelper(e,v,0, false);
 		//no need to reconstruct the tree, no keys were changed
-		
+		int oldValue = e[1];
+		//Changing the key of the passed node in the heap
+		heap[e[2]][1] = v;
 		//the value will be stored in that var
-		return toRemember;
+		return oldValue;
 	}
 	
-	public void replacerHelper(int[] e, int kv, int current, boolean wantKey) {
-		//it has gone too far
-		if(current>size-1)
-			return;
-		//the desired node was found
-		if(Arrays.equals(e, heap[current])) {
-			if (wantKey) {
-				toRemember = e[0];e[0] = kv;
-				foundAt = current;
-			} else {
-				toRemember = e[1];e[1] = kv;
-				foundAt = current;
-			}
-			return;
-		}
-		if(compare(e, heap[current])==-1)
-			return;//it is useless to continue searching
-		//visiting the children of the current node
-		replacerHelper(e, kv, current*2+1, wantKey);
-		replacerHelper(e, kv, current*2+2, wantKey);
-	}
+	
 	
 	public int size() {
 		return size;
@@ -170,6 +163,37 @@ public class Heap {
 		isMax = !isMax;
 		reconstruct(0);
 	}
+	
+	//printing only the keys of the tree
+	public String toString() {
+		String result = "[";
+		for (int i = 0; i < heap.length; i++) {
+			result+=heap[i][0]+ ", ";
+		}
+		return result +="]";
+	}
+	
+//	public void replacerHelper(int[] e, int kv, int current, boolean wantKey) {
+//		//it has gone too far
+//		if(current>size-1)
+//			return;
+//		//the desired node was found
+//		if(Arrays.equals(e, heap[current])) {
+//			if (wantKey) {
+//				toRemember = e[0];e[0] = kv;
+//				foundAt = current;
+//			} else {
+//				toRemember = e[1];e[1] = kv;
+//				foundAt = current;
+//			}
+//			return;
+//		}
+//		if(compare(e, heap[current])==-1)
+//			return;//it is useless to continue searching
+//		//visiting the children of the current node
+//		replacerHelper(e, kv, current*2+1, wantKey);
+//		replacerHelper(e, kv, current*2+2, wantKey);
+//	}
 	
 
 }
