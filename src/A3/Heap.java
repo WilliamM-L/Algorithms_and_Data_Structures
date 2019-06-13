@@ -44,12 +44,12 @@ public class Heap {
 	}
 	
 	private void swapNodes(int n1, int n2) {
-		int[] bucket = heap[n1].clone();
 		//the indices have to be switched before the nodes are swapped for the indices to stay valid
-		int indexBucket = heap[n1][0];
-		heap[n1][0] = heap[n2][0];
-		heap[n2][0] = indexBucket;
-		
+		int indexBucket = heap[n1][2];
+		heap[n1][2] = heap[n2][2];
+		heap[n2][2] = indexBucket;
+		//The clone must be created after the indices were swapped
+		int[] bucket = heap[n1].clone();
 		heap[n1] = heap[n2];
 		heap[n2] = bucket;
 	}
@@ -169,7 +169,11 @@ public class Heap {
 	
 	public void toggle() {
 		isMax = !isMax;
-		reconstruct(0);
+		//int[] toReplace = removeTop();
+		//insert(toReplace[0],toReplace[1]);
+		for (int i = (size-1)/2; i != 0; i--) {
+			reconstruct(i);
+		}
 	}
 	
 	//printing only the keys of the tree
