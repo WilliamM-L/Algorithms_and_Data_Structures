@@ -6,7 +6,7 @@ public class Heap {
 	private int size;
 	private int[][] heap;
 	//heap is of the form [[key,value,index],[key,value,index],[key,value,index],...]
-	
+
 	//Be sure to review the comparator parameters!
 	//This should work since the compare method works differently depending on the type of the heap
 	public int reconstruct(int start) {
@@ -17,7 +17,7 @@ public class Heap {
 //			reconstruct(2*start+1);
 //		}
 //		else
-		if (heap[start]!=null&&(start!=0 && (start-1)/2>=0 && compare(heap[start],heap[(start-1)/2])==-1)) {
+		if (heap[start]!=null&&((start-1)/2>0 && compare(heap[start],heap[(start-1)/2])==-1)) {
 //			bucket = heap[(start-1)/2];
 //			heap[(start-1)/2] = heap[start];
 //			heap[start] = bucket;
@@ -28,17 +28,11 @@ public class Heap {
 			//won't go in if we're at the leaves
 			//(Checking the left child)
 			if(2*start+1<size && compare(heap[2*start+1],heap[start])==-1) {
-//				bucket = heap[2*start+1];
-//				heap[2*start+1] = heap[start];
-//				heap[start] = bucket;
 				swapNodes(2*start+1, start);
 				reconstruct(2*start+1);
 			}
 			//now checking the right child in case there was no match
 			if (2*start+2<size && compare(heap[2*start+2],heap[start])==-1) {
-//				bucket = heap[2*start+2];
-//				heap[2*start+2] = heap[start];
-//				heap[start] = bucket;
 				swapNodes(2*start+2, start);
 				reconstruct(2*start+2);
 			}
@@ -47,7 +41,7 @@ public class Heap {
 		//the index it's now at is returned in case it is used
 		return start;
 	}
-	
+
 	private int swapNodes(int n1, int n2) {
 		//the indices have to be switched before the nodes are swapped for the indices to stay valid
 		int indexBucket = heap[n1][2];
@@ -59,7 +53,7 @@ public class Heap {
 		heap[n2] = bucket;
 		return indexBucket;
 	}
-	
+
 	public int[] insert(int k, int v) {
 		int[] toAdd = {k,v,size};
 		//might need to extend the array representation of the heap
@@ -69,17 +63,17 @@ public class Heap {
 		int newIndex = reconstruct(size);
 		size++;
 		int[] result = {k,v,newIndex};
-		
+
 		return result;
 	}
-	
+
 	public Heap(boolean isMax) {
 		this.isMax = isMax;
 		//the entries are not initialized
 		heap = new int[3][];
 		size = 0;
 	}
-	
+
 	public void extendHeap() {
 		//the new heap will be twice the size of the old heap
 		int[][] replacement = new int[heap.length*2][];
@@ -88,17 +82,17 @@ public class Heap {
 		}
 		heap = replacement;
 	}
-	
+
 	//this does not change the heap structure, it returns the value
 	public int[] top() {
 		return heap[0];
 	}
-	
+
 	//after removing the top, the tree must be reconstructed
 	public int[] removeTop()	{
 		return remove(heap[0]);
 	}
-	
+
 	public int[] remove(int[] e) {
 		int[] result = null;
 		if (e!=null) {
@@ -109,10 +103,10 @@ public class Heap {
 				int toReconstructAt = swapNodes(e[2], size-1);
 				heap[size-1] = null;
 				size--;
-				
+
 				reconstruct(toReconstructAt);
-				
-				
+
+
 			} else {
 				//if the last node is wanted, no reconstruction of the heap is required
 				result = heap[e[2]].clone();
@@ -121,11 +115,11 @@ public class Heap {
 			}
 			//the heap is smaller
 		}
-		
-		
+
+
 		return result;
 	}
-	
+
 	//here node2 will be taken from the heap
 	public int compare(int[] node1, int[] node2) {
 		//you might need some <= or >= in here since a node can have children with equal keys
@@ -143,8 +137,8 @@ public class Heap {
 		System.err.println("A problem occured!");
 		return -2;
 	}
-	
-	
+
+
 	//since this is a heap, and not a binary search tree, it takes O(n) to find the entry,
 	//because we don't know which child of any node is the biggest child node.
 	public int replaceKey(int[] e, int k) {
@@ -155,7 +149,7 @@ public class Heap {
 		//the key will be stored in that var
 		return oldKey;
 	}
-	
+
 	public int replaceValue(int[] e, int v) {
 		//no need to reconstruct the tree, no keys were changed
 		int oldValue = e[1];
@@ -164,23 +158,23 @@ public class Heap {
 		//the value will be stored in that var
 		return oldValue;
 	}
-	
-	
-	
+
+
+
 	public int size() {
 		return size;
 	}
-	
+
 	public boolean isEmpty() {
 		return size == 0;
 	}
-	
+
 	public String state() {
 		if (isMax)
 			return "This heap is a Max-Heap!";
 		return "This heap is a Min-Heap!";
 	}
-	
+
 	public void toggle() {
 		isMax = !isMax;
 		//int[] toReplace = removeTop();
@@ -189,7 +183,7 @@ public class Heap {
 			reconstruct(i);
 		}
 	}
-	
+
 	//printing only the keys of the tree
 	public String toString() {
 		String result = "[";
@@ -201,7 +195,7 @@ public class Heap {
 		}
 		return result +="]";
 	}
-	
+
 //	public void replacerHelper(int[] e, int kv, int current, boolean wantKey) {
 //		//it has gone too far
 //		if(current>size-1)
@@ -223,6 +217,6 @@ public class Heap {
 //		replacerHelper(e, kv, current*2+1, wantKey);
 //		replacerHelper(e, kv, current*2+2, wantKey);
 //	}
-	
+
 
 }
