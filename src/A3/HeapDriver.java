@@ -33,7 +33,21 @@ public class HeapDriver {
 		System.out.println(h);
 		h.toggle();
 		System.out.println(h);
-		System.out.println(h.state());
+		h.insert(9, 4);
+		System.out.println(h);
+		h.toggle();
+		System.out.println(h);
+		h.insert(17, 8);
+		h.insert(11, 4);
+		h.insert(28, 85);
+		h.insert(51, 6);
+		System.out.println(h);
+		h.toggle();
+		System.out.println(h);
+		h.removeTop();
+		System.out.println(h);
+		h.toggle();
+		System.out.println(h);
 
 	}
 

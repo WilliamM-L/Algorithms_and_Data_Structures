@@ -12,7 +12,12 @@ public class Heap {
 	public int reconstruct(int start) {
 		//looking at the parents for a violation of heap structure
 		//won't go in if we're at the root
-		if (start!=0 && compare(heap[start],heap[(start-1)/2])==-1) {
+//		if (start<size/2&&heap[start]==null) {
+//			swapNodes(2*start+1, start);
+//			reconstruct(2*start+1);
+//		}
+//		else
+		if (heap[start]!=null&&(start!=0 && (start-1)/2>=0 && compare(heap[start],heap[(start-1)/2])==-1)) {
 //			bucket = heap[(start-1)/2];
 //			heap[(start-1)/2] = heap[start];
 //			heap[start] = bucket;
@@ -43,7 +48,7 @@ public class Heap {
 		return start;
 	}
 	
-	private void swapNodes(int n1, int n2) {
+	private int swapNodes(int n1, int n2) {
 		//the indices have to be switched before the nodes are swapped for the indices to stay valid
 		int indexBucket = heap[n1][2];
 		heap[n1][2] = heap[n2][2];
@@ -52,6 +57,7 @@ public class Heap {
 		int[] bucket = heap[n1].clone();
 		heap[n1] = heap[n2];
 		heap[n2] = bucket;
+		return indexBucket;
 	}
 	
 	public int[] insert(int k, int v) {
@@ -95,20 +101,28 @@ public class Heap {
 	
 	public int[] remove(int[] e) {
 		int[] result = null;
-		if (e[2] != size-1) {
-			//procedure if we're removing a node that's not the last one
-			result = heap[e[2]].clone();
-			//the target node becomes the last node, and the last node is removed
-			heap[e[2]] = heap[size-1];
-			heap[size-1] = null;
-			reconstruct(e[2]);
-		} else {
-			//if the last node is wanted, no reconstruction of the heap is required
-			result = heap[e[2]].clone();
-			heap[e[2]] = null;
+		if (e!=null) {
+			if (e[2] != size-1) {
+				//procedure if we're removing a node that's not the last one
+				result = heap[e[2]].clone();
+				//the target node becomes the last node, and the last node is removed
+				int toReconstructAt = swapNodes(e[2], size-1);
+				heap[size-1] = null;
+				size--;
+				
+				reconstruct(toReconstructAt);
+				
+				
+			} else {
+				//if the last node is wanted, no reconstruction of the heap is required
+				result = heap[e[2]].clone();
+				heap[e[2]] = null;
+				size--;
+			}
+			//the heap is smaller
 		}
-		//the heap is smaller
-		size--;
+		
+		
 		return result;
 	}
 	
@@ -171,7 +185,7 @@ public class Heap {
 		isMax = !isMax;
 		//int[] toReplace = removeTop();
 		//insert(toReplace[0],toReplace[1]);
-		for (int i = (size-1)/2; i != 0; i--) {
+		for (int i = 0; i < size; i++) {
 			reconstruct(i);
 		}
 	}
@@ -181,7 +195,8 @@ public class Heap {
 		String result = "[";
 		for (int i = 0; i < size; i++) {
 			result+="[";
-			result+=heap[i][0]+ ", " + heap[i][1] + ", " +heap[i][2];
+			result+=heap[i][0]+  ", " +heap[i][2];
+			//", " + heap[i][1] +
 			result+="]";
 		}
 		return result +="]";
