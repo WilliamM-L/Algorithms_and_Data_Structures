@@ -113,7 +113,7 @@ public class Calculator {
 		opStack.pop();
 	}
 	
-	//simply represent the precendence scheme for the operators
+	//simply represent the precedence scheme for the operators
 	private static int precedence(String op) {
 		if (op.equals("(")||op.equals(")"))
 			return 6;

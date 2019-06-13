@@ -175,8 +175,10 @@ public class Heap {
 	//printing only the keys of the tree
 	public String toString() {
 		String result = "[";
-		for (int i = 0; i < heap.length; i++) {
-			result+=heap[i][0]+ ", ";
+		for (int i = 0; i < size; i++) {
+			result+="[";
+			result+=heap[i][0]+ ", " + heap[i][1] + ", " +heap[i][2];
+			result+="]";
 		}
 		return result +="]";
 	}
