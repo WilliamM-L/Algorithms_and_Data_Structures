@@ -1,4 +1,8 @@
 package A3;
+
+import java.util.Arrays;
+//only used to compare arrays
+
 //only used to compare two arrays for equality for better readability
 
 public class Heap {
@@ -12,22 +16,12 @@ public class Heap {
 	public int reconstruct(int start) {
 		//looking at the parents for a violation of heap structure
 		//won't go in if we're at the root
-//		if (start<size/2&&heap[start]==null) {
-//			swapNodes(2*start+1, start);
-//			reconstruct(2*start+1);
-//		}
-//		else
-		if (heap[start]!=null&&((start-1)/2>0 && compare(heap[start],heap[(start-1)/2])==-1)) {
-//			bucket = heap[(start-1)/2];
-//			heap[(start-1)/2] = heap[start];
-//			heap[start] = bucket;
+		if (heap[start]!=null&&(start!=0 && compare(heap[start],heap[(start-1)/2])==-1)) {
 			swapNodes((start-1)/2, start);
 			reconstruct((start-1)/2);
 		} else {
-			//looking at the children for a violation of the heap structure
-			//won't go in if we're at the leaves
 			//(Checking the left child)
-			if(2*start+1<size && compare(heap[2*start+1],heap[start])==-1) {
+			if(2*start+1<size  && compare(heap[2*start+1],heap[start])==-1) {
 				swapNodes(2*start+1, start);
 				reconstruct(2*start+1);
 			}
@@ -95,7 +89,8 @@ public class Heap {
 
 	public int[] remove(int[] e) {
 		int[] result = null;
-		if (e!=null) {
+		//proceed only if the node is valid
+		if (e!=null && e[2]<size && Arrays.equals(e, heap[e[2]])) {
 			if (e[2] != size-1) {
 				//procedure if we're removing a node that's not the last one
 				result = heap[e[2]].clone();
@@ -142,21 +137,29 @@ public class Heap {
 	//since this is a heap, and not a binary search tree, it takes O(n) to find the entry,
 	//because we don't know which child of any node is the biggest child node.
 	public int replaceKey(int[] e, int k) {
-		int oldKey = e[0];
+		if (Arrays.equals(e, heap[e[2]])) {
+			int oldKey = e[0];
 		//Changing the key of the passed node in the heap
 		heap[e[2]][0] = k;
 		reconstruct(e[2]);
 		//the key will be stored in that var
 		return oldKey;
+		}
+		return -1;
 	}
 
 	public int replaceValue(int[] e, int v) {
-		//no need to reconstruct the tree, no keys were changed
-		int oldValue = e[1];
-		//Changing the key of the passed node in the heap
-		heap[e[2]][1] = v;
-		//the value will be stored in that var
-		return oldValue;
+		//checking if the nodes match
+		if (Arrays.equals(e, heap[e[2]])) {
+			//no need to reconstruct the tree, no keys were changed
+			int oldValue = e[1];
+			//Changing the key of the passed node in the heap
+			heap[e[2]][1] = v;
+			//the value will be stored in that var
+			return oldValue;
+		}
+		return -1;
+		
 	}
 
 
@@ -189,34 +192,12 @@ public class Heap {
 		String result = "[";
 		for (int i = 0; i < size; i++) {
 			result+="[";
-			result+=heap[i][0]+  ", " +heap[i][2];
+			result+=heap[i][0]+", " + heap[i][1] +  ", " +heap[i][2];
 			//", " + heap[i][1] +
 			result+="]";
 		}
 		return result +="]";
 	}
-
-//	public void replacerHelper(int[] e, int kv, int current, boolean wantKey) {
-//		//it has gone too far
-//		if(current>size-1)
-//			return;
-//		//the desired node was found
-//		if(Arrays.equals(e, heap[current])) {
-//			if (wantKey) {
-//				toRemember = e[0];e[0] = kv;
-//				foundAt = current;
-//			} else {
-//				toRemember = e[1];e[1] = kv;
-//				foundAt = current;
-//			}
-//			return;
-//		}
-//		if(compare(e, heap[current])==-1)
-//			return;//it is useless to continue searching
-//		//visiting the children of the current node
-//		replacerHelper(e, kv, current*2+1, wantKey);
-//		replacerHelper(e, kv, current*2+2, wantKey);
-//	}
 
 
 }

@@ -6,6 +6,7 @@ public class HeapDriver {
 		// TODO Auto-generated method stub
 		//true = Max Heap false = Min Heap
 		Heap h = new Heap(true);
+		System.out.println("Is it empty?" + h.isEmpty());
 		h.insert(2, 5);
 		System.out.println(h);
 		h.insert(5, 2);
@@ -48,6 +49,21 @@ public class HeapDriver {
 		System.out.println(h);
 		h.toggle();
 		System.out.println(h);
+		System.out.println(h.size());
+		System.out.println(h.top()[0]);
+		System.out.println("Is it empty?" + h.isEmpty());
+		int[] sample3 = {51,6,1};
+		h.replaceKey(sample3, 32);
+		System.out.println(h);
+		int[] sample4 = {28,85,3};
+		h.replaceValue(sample4, 66);
+		System.out.println(h);
+		h.toggle();
+		System.out.println(h);
+		int[] sample5 = {9,4,4};
+		h.remove(sample5);
+		System.out.println(h);
+		
 
 	}
 
